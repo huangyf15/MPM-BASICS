@@ -1,0 +1,63 @@
+mpm3d *** Sample file for water drop impacting steel plate
+! 水滴高速撞击钢靶
+! Unit: mm g N ms MPa
+nbco 2                                 ! 总组件数
+nbbo 2                                 ! 总离散体数
+nbmp 78086 !                          ! 总的质点数
+nmat 2                                 ! 总材料组数
+                                       
+spx  -60   60                          ! 定义网格范围
+spy  -60   60                          
+spz   -10   100.0                      
+dcell  2.12                            ! 定义网格离散尺寸
+!      x0  xn  y0  yn  z0  zn          
+fixed  1   1   1   1   1   1           ! 设置边界条件，0 自由，1 固定，2 对称
+                                       
+dtscale 0.4                            ! 时间步长的放缩值 (建议不要大于0.4)
+endtime 2.0  ! test                    ! 总的计算时间
+outtime 0.04                           ! 结果输出的时间间隔
+rpttime 0.02                           ! 计算状态输出的时间间隔
+                                       
+usf on                                 ! mpm计算格式(建议使用MUSL或USF)
+jaum on                                ! 使用 Jaumann 率
+contact                                ! 开启接触算法
+lagr 0.00 2                            ! Lagrange乘子法，摩擦系数，法线计算格式（0 平均值，1 组件1，2组件2）
+                                       
+tecp                                   ! 把结果输出为tecplot格式
+pt2d 0 60 -60  60 -10 100.0            ! 只输出特定区域的质点
+                                       
+outr seqv                              ! 输出等效应力
+outr velx                              ! 输出x, y, z方向速度分量
+outr vely
+outr velz
+curv engk                              ! 输出动能时程曲线
+curv engi                              ! 输出内能时程曲线
+                                       
+material                               ! 设置材料组
+!  num  mtype  density  wavespeed 		       
+	1   null   1.0d-3   1.5d3                  ! 空材料，必须配合状态方程使用
+!  num  mtype  density  young's  Poission	   
+	2   elas   7.9d-3   206d3     0.3d0        ! 弹性材料  
+
+! set EOS parameter
+!      num type   wave    s     r              
+ seos   1   2    1.65d3  1.92  0.1  0          ! 水的Mie-Gruneisen状态方程参数，来自《物质点法》第187页
+                                               
+Particle sphere 1                              
+!matid  pmass dp 0x 0y 0z nx                   ! 生成水滴的离散质点(球)
+   1     1.0d-3 1.06 0 0.0 7.50 7              ! 材料类型 密度 质点间距 球心 半径(质点数目)
+                                               
+Particle block 2                               ! 生成钢靶的离散质点(方块)
+! matid pmass dp 0x 0y 0z nx ny nz             ! 材料类型 密度 质点间距 左下角(ox oy oz) 三个方向上的质点数目
+    2    7.90d-3 1.06 -60 -60 -6.36 113 113 6
+ 
+                                               
+velo                                           ! 施加初始速度
+body 1 0.0 0.0 -20.0                           ! body 第n个body vx vy vz
+endv
+
+!load                                           ! 施加载荷条件
+!grav 1 0.0 0.0 -9.8d-3                         ! 重力 第n个body gx gy gz
+!endl
+
+endi
