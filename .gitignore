@@ -1,3 +1,14 @@
+
+# ========================
+# Files with large data and executable program
+# ========================
+bin/
+x_project/
+
+# =========================
+# Windows
+# =========================
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
@@ -13,16 +24,11 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
-bin/
-example/
 
 # Windows shortcuts
 *.lnk
 
 # =========================
-# Operating System Files
-# =========================
-
 # OSX
 # =========================
 
